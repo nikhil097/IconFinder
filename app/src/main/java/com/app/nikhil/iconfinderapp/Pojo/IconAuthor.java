@@ -1,6 +1,5 @@
 package com.app.nikhil.iconfinderapp.Pojo;
 
-import com.google.gson.annotations.SerializedName;
 
 public class IconAuthor {
 

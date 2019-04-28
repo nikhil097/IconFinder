@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UI.MainActivity">
+
+
 
    <android.support.v7.widget.RecyclerView
        android:layout_width="match_parent"
@@ -14,4 +16,24 @@
 
    </android.support.v7.widget.RecyclerView>
 
-</android.support.constraint.ConstraintLayout>
+   <com.victor.loading.rotate.RotateLoading
+       android:layout_width="100dp"
+       android:layout_height="100dp"
+       android:layout_centerInParent="true"
+       android:id="@+id/iconsLoadingBar"
+       app:loading_color="@color/colorPrimary"/>
+
+
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textStyle="bold"
+       android:textSize="25sp"
+       android:text="No icons found"
+       android:visibility="gone"
+       android:gravity="center"
+       android:id="@+id/noIconsFoundTv"
+       android:layout_centerInParent="true"/>
+
+
+</RelativeLayout>

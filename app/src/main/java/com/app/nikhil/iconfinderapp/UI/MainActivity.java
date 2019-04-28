@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.app.nikhil.iconfinderapp.ResponseBody.IconSetResponseBody;
 import com.app.nikhil.iconfinderapp.Rest.ApiCredential;
 import com.app.nikhil.iconfinderapp.Rest.ApiService;
 import com.app.nikhil.iconfinderapp.Rest.ResponseCallback;
+import com.victor.loading.rotate.RotateLoading;
 
 
 import java.util.ArrayList;
@@ -47,8 +50,11 @@ public class MainActivity extends AppCompatActivity {
     DownloadManager downloadmanager;
     IconAdapter iconAdapter;
     RecyclerView iconRv;
+    TextView noIconsFoundTv;
+    RotateLoading iconsLoadingBar;
 
     String iconName;
+    boolean isQuerySearch=false;
 
     String afterIconsetId = "";
 
@@ -66,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        iconRv = findViewById(R.id.iconsRv);
+        noIconsFoundTv=findViewById(R.id.noIconsFoundTv);
+        iconsLoadingBar=findViewById(R.id.iconsLoadingBar);
+        iconsLoadingBar.start();
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setIcon(R.drawable.ic_launcher_background);
@@ -79,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         queryEt = v.findViewById(R.id.searchIconEt);
         appIconView = v.findViewById(R.id.appIconImageView);
         appTitleView = v.findViewById(R.id.appTitle);
-
 
         searchIconBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,34 +106,61 @@ public class MainActivity extends AppCompatActivity {
         crossBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                queryEt.setText("");
                 crossBtn.setVisibility(View.GONE);
                 queryEt.setVisibility(View.GONE);
                 appIconView.setVisibility(View.VISIBLE);
                 appTitleView.setVisibility(View.VISIBLE);
                 searchIconBtn.setVisibility(View.VISIBLE);
+                currentChildPosition=0;
+                iconsList.clear();
+                iconsetsList.clear();
+                iconRv.setVisibility(View.VISIBLE);
+                noIconsFoundTv.setVisibility(View.GONE);
+                afterIconsetId="";
+                isQuerySearch=false;
+                iconAdapter.notifyDataSetChanged();
+                populateIconsetsList();
 
             }
         });
 
-        
+        queryEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (s.length()>2) {
+                    populateIconsListUsingQuery(s.toString().trim());
+                    iconsList.clear();
+                    iconsetsList.clear();
+                    isQuerySearch=true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         actionBar.setCustomView(v);
 
-        iconRv = findViewById(R.id.iconsRv);
-
         apiService = new ApiService();
-
         iconsetsList = new ArrayList<>();
         iconsList = new ArrayList<>();
-
-
         populateIconsetsList();
 
     }
 
 
     public void populateIconsetsList() {
+
+        iconsLoadingBar.start();
 
         apiService.getIconsets(ApiCredential.apiClientId, ApiCredential.apiClientSecret, "20", afterIconsetId, new ResponseCallback<IconSetResponseBody>() {
             @Override
@@ -134,19 +171,16 @@ public class MainActivity extends AppCompatActivity {
 
                     populateIconsList(iconSetResponseBody.getIconsets().get(i).getIdentifier());
                 }
-
                 afterIconsetId = iconSetResponseBody.getIconsets().get(iconSetResponseBody.getIconsets().size() - 1).getIconset_id();
 
                 if (currentChildPosition == 0)
                     populateRecyclerIconView();
-
             }
 
             @Override
             public void failure(IconSetResponseBody iconSetResponseBody) {
 
                 Toast.makeText(MainActivity.this, iconSetResponseBody.getMessage()+"", Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -165,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 iconAdapter.notifyItemInserted(iconsList.size() - 1);
-
+                iconsLoadingBar.stop();
             }
 
             @Override
@@ -179,13 +213,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateRecyclerIconView() {
 
-
         iconAdapter = new IconAdapter(this, iconsList) {
 
             @Override
             public void load(int position) {
-                populateIconsetsList();
-                currentChildPosition = position;
+                if (!isQuerySearch) {
+                    populateIconsetsList();
+                    currentChildPosition = position;
+                }
             }
 
             @Override
@@ -200,8 +235,6 @@ public class MainActivity extends AppCompatActivity {
         iconRv.setLayoutManager(mLayoutManager);
         iconRv.setItemAnimator(new DefaultItemAnimator());
         iconRv.setAdapter(iconAdapter);
-
-
     }
 
     public  boolean isStoragePermissionGranted() {
@@ -234,6 +267,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void populateIconsListUsingQuery(String query) {
+        apiService.getIcons(query, ApiCredential.apiClientId, ApiCredential.apiClientSecret, new ResponseCallback<IconResponseBody>() {
+            @Override
+            public void success(IconResponseBody iconResponseBody) {
+
+
+                for (Icon icon : iconResponseBody.getIcons()) {
+                    iconsList.add(icon);
+                    Log.v("iconname", icon.getIcon_id());
+                }
+
+                noIconsFoundTv.setVisibility(View.GONE);
+                iconRv.setVisibility(View.VISIBLE);
+                populateRecyclerIconView();
+
+            }
+
+            @Override
+            public void failure(IconResponseBody iconResponseBody) {
+
+                noIconsFoundTv.setVisibility(View.VISIBLE);
+                iconRv.setVisibility(View.GONE);
+            }
+
+        });
+
+    }
 
 
     public void downloadIconManager()

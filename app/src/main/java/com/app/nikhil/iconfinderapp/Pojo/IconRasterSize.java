@@ -1,6 +1,5 @@
 package com.app.nikhil.iconfinderapp.Pojo;
 
-import android.graphics.ImageFormat;
 
 import java.util.ArrayList;
 

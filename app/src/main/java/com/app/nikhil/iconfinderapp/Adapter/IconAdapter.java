@@ -1,7 +1,6 @@
 package com.app.nikhil.iconfinderapp.Adapter;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

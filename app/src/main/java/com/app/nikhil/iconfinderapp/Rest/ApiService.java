@@ -6,7 +6,6 @@ import com.app.nikhil.iconfinderapp.ResponseBody.IconSetResponseBody;
 
 
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,7 +73,6 @@ public class ApiService {
                 callback.failure(iconSetResponseBody);
             }
         });
-
     }
 
     public void getIcons(String iconsetIdentifer, String apiClientId, String apiClientSearch, final ResponseCallback<IconResponseBody> callback)
