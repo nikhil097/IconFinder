@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="55dp"
+        android:tint="@android:color/white"
+        android:src="@drawable/icon_finder"
+        android:layout_marginTop="4dp"
+        android:id="@+id/appIconImageView"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/appTitle"
+        android:layout_toRightOf="@+id/appIconImageView"
+        android:gravity="center_vertical"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:text="@string/app_name"
+        android:textSize="25sp"/>
+
+
+    <android.support.v7.widget.AppCompatEditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/searchIconEt"
+        android:layout_marginBottom="4dp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/white"
+        android:layout_margin="8dp"
+        android:hint="Search icons here"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:id="@+id/searchBtn"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        app:srcCompat="@drawable/ic_search"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"
+        android:id="@+id/crossBtn"
+        app:srcCompat="@drawable/ic_cross"/>
+
+
+</RelativeLayout>

@@ -1,4 +1,9 @@
 package com.app.nikhil.iconfinderapp.Rest;
 
-public class ResponseCallback {
+public interface ResponseCallback<T> {
+
+    void success(T t);
+
+    void  failure(T t);
+
 }
